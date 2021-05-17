@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cryoCARE",
-    version="0.0.2",
+    version="0.1.0",
     author="Tim-Oliver Buchholz",
     author_email="tibuch@mpi-cbg.de",
     description="cryoCARE is deep learning approach for cryo-TEM tomogram denoising.",
@@ -22,11 +22,11 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        "numpy<1.19.0,>=1.16.0",
+        "numpy",
         "mrcfile",
-        "keras>=2.2.4,<2.3.0",
-        "tensorflow-gpu>=1.12,<2.0.0",
-        "csbdeep>=0.4.0,<0.6.0",
+        "keras>=2.1.2,<2.4.0",
+        "csbdeep>=0.6.0,<0.7.0",
+        "psutil"
     ],
     scripts=[
         'cryocare/scripts/cryoCARE_train_data_config.py',

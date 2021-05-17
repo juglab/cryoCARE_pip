@@ -1,12 +1,15 @@
+#! python
 import argparse
 import json
 from os.path import join
 import datetime
 import mrcfile
 import numpy as np
-from csbdeep.internals.predict import tile_overlap
 
 from cryocare.internals.CryoCARE import CryoCARE
+from cryocare.internals.CryoCAREDataModule import CryoCARE_DataModule
+
+import psutil
 
 
 def main():
@@ -17,48 +20,49 @@ def main():
     with open(args.conf, 'r') as f:
         config = json.load(f)
 
+    dm = CryoCARE_DataModule()
+    dm.load(config['path'])
+
     model = CryoCARE(None, config['model_name'], basedir=config['path'])
 
     even = mrcfile.mmap(config['even'], mode='r', permissive=True)
     odd = mrcfile.mmap(config['odd'], mode='r', permissive=True)
-    denoised = mrcfile.new_mmap(join(config['path'], config['output_name']), even.data.shape, mrc_mode=2, overwrite=True)
+    denoised = mrcfile.new_mmap(join(config['path'], config['output_name']), even.data.shape, mrc_mode=2,
+                                overwrite=True)
 
-    mean_std = np.load(join(config['path'], 'mean_std.npz'))
-    mean, std = mean_std['mean'], mean_std['std']
+    even.data.shape += (1,)
+    odd.data.shape += (1,)
+    denoised.data.shape += (1,)
 
-    overlap = tile_overlap(model.config.unet_n_depth, model.config.unet_kern_size)
+    mean, std = dm.train_dataset.mean, dm.train_dataset.std
 
-    mrc_slice_shape = config['mrc_slice_shape']
+    def file_size(z, y, x):
+        return (x * y * z * 32) / (8 * 1024 * 1024 * 1024)
 
-    print(even.data.shape)
-    print(denoised.data.shape)
-    for z in range(0, even.data.shape[0], mrc_slice_shape[0] - 2 * overlap):
-        for y in range(0, even.data.shape[1], mrc_slice_shape[1] - 2 * overlap):
-            for x in range(0, even.data.shape[2], mrc_slice_shape[2] - 2 * overlap):
-                start_z, end_z = fix_slice(z, z + mrc_slice_shape[0], even.data.shape[0])
-                start_y, end_y = fix_slice(y, y + mrc_slice_shape[1], even.data.shape[1])
-                start_x, end_x = fix_slice(x, x + mrc_slice_shape[2], even.data.shape[2])
+    def get_available_memory():
+        return psutil.virtual_memory().available / (1024 * 1024 * 1024)
 
-                even_slice = even.data[start_z:end_z, start_y:end_y, start_x:end_x]
-                odd_slice = odd.data[start_z:end_z, start_y:end_y, start_x:end_x]
+    def get_n_tiles(z, y, x):
+        n_tiles = [1, 1, 1, 1]
+        cz = z / n_tiles[0]
+        cy = y / n_tiles[1]
+        cx = x / n_tiles[2]
+        while file_size(cz, cy, cx) > (get_available_memory() / 2.):
+            if cz > cy and cz > cx:
+                n_tiles[0] *= 2
+            elif cy > cx:
+                n_tiles[1] *= 2
+            else:
+                n_tiles[2] *= 2
 
-                even_slice = (even_slice - mean) / std
-                odd_slice = (odd_slice - mean) / std
-                even_slice = (model.predict(even_slice, axes='ZYX', normalizer=None) * std) + mean
-                odd_slice = (model.predict(odd_slice, axes='ZYX', normalizer=None) * std) + mean
+            cz = z / n_tiles[0]
+            cy = y / n_tiles[1]
+            cx = x / n_tiles[2]
 
-                img_slice_z, slice_slice_z = get_slices(start_z, end_z, overlap,
-                                                        even.data.shape[0])
-                img_slice_y, slice_slice_y = get_slices(start_y, end_y, overlap,
-                                                        even.data.shape[1])
-                img_slice_x, slice_slice_x = get_slices(start_x, end_x, overlap,
-                                                        even.data.shape[2])
+        return n_tiles
 
-                print(img_slice_x, slice_slice_x)
-                even_slice = even_slice[slice_slice_z, slice_slice_y, slice_slice_x]
-                odd_slice = odd_slice[slice_slice_z, slice_slice_y, slice_slice_x]
-                print(even_slice.shape)
-                denoised.data[img_slice_z, img_slice_y, img_slice_x] = (even_slice + odd_slice) / 2.0
+    model.predict(even.data, odd.data, denoised.data, axes='ZYXC', normalizer=None, mean=mean, std=std,
+                  n_tiles=get_n_tiles(even.header.nz, even.header.ny, even.header.nx))
 
     for l in even.header.dtype.names:
         if l == 'label':
@@ -71,33 +75,6 @@ def main():
         else:
             denoised.header[l] = even.header[l]
     denoised.header['mode'] = 2
-
-
-def get_slices(start, end, overlap, img_shape):
-    img_start = start + overlap if start > 0 else 0
-    img_end = end - overlap if end < img_shape - overlap else -1
-
-    if img_start == 0 and img_end == img_shape:
-        slice_start = 0
-        slice_end = -1
-    elif img_start == 0 and img_end < img_shape:
-        slice_start = 0
-        slice_end = -overlap
-    elif img_start > 0 and img_end == img_shape:
-        slice_start = overlap
-        slice_end = -1
-    else:
-        slice_start = overlap
-        slice_end = -overlap
-
-    return slice(img_start, img_end), slice(slice_start, slice_end)
-
-
-def fix_slice(start, end, max_len):
-    if end > max_len:
-        end = -1
-
-    return start, end
 
 
 if __name__ == "__main__":
