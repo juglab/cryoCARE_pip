@@ -27,7 +27,6 @@ setuptools.setup(
         "keras>=2.2.4,<2.3.0",
         "tensorflow-gpu>=1.12,<2.0.0",
         "csbdeep>=0.4.0,<0.6.0",
-        "PyInquirer"
     ],
     scripts=[
         'cryocare/scripts/cryoCARE_train_data_config.py',
