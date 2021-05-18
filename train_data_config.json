@@ -1,0 +1,18 @@
+{
+  "even": [
+    "/path/to/even.rec"
+  ],
+  "odd": [
+    "/path/to/odd.rec"
+  ],
+  "patch_shape": [
+    72,
+    72,
+    72
+  ],
+  "num_slices": 1200,
+  "split": 0.9,
+  "tilt_axis": "Y",
+  "n_normalization_samples": 500,
+  "path": "./"
+}
