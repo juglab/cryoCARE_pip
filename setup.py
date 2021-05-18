@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.1.0",
     author="Tim-Oliver Buchholz",
     author_email="tibuch@mpi-cbg.de",
-    description="cryoCARE is deep learning approach for cryo-TEM tomogram denoising.",
+    description="cryoCARE is a deep learning approach for cryo-TEM tomogram denoising.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/juglab/cryoCARE_pip",
