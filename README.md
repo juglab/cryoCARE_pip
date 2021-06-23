@@ -87,6 +87,7 @@ Create an empty file called `predict_config.json`, copy-paste the following temp
   "path": "./",
   "even": "/path/to/even.rec",
   "odd": "/path/to/odd.rec",
+  "n_tiles": [1, 1, 1],
   "output_name": "denoised.rec"
 }
 ```
@@ -97,6 +98,7 @@ __Note:__ Currently only a single tomogram can be denoised at a time i.e. if you
 * `"path"`: Path to the parent directory where the model is stored. This corresponds to `"path"` in the `train_config.json`.
 * `"even"`: Path to the even tomogram.
 * `"odd"`: Path to the odd tomogram.
+* `"n_tiles"`: Initial tiles per dimension. Gets increased if the tiles do not fit on the GPU.
 * `"output_name"`: Name of the denoised tomogram.
 
 #### Run Prediction:

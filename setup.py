@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cryoCARE",
-    version="0.1.0",
+    version="0.1.1",
     author="Tim-Oliver Buchholz",
     author_email="tibuch@mpi-cbg.de",
     description="cryoCARE is deep learning approach for cryo-TEM tomogram denoising.",

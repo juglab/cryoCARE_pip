@@ -36,33 +36,8 @@ def main():
 
     mean, std = dm.train_dataset.mean, dm.train_dataset.std
 
-    def file_size(z, y, x):
-        return (x * y * z * 32) / (8 * 1024 * 1024 * 1024)
-
-    def get_available_memory():
-        return psutil.virtual_memory().available / (1024 * 1024 * 1024)
-
-    def get_n_tiles(z, y, x):
-        n_tiles = [1, 1, 1, 1]
-        cz = z / n_tiles[0]
-        cy = y / n_tiles[1]
-        cx = x / n_tiles[2]
-        while file_size(cz, cy, cx) > (get_available_memory() / 2.):
-            if cz > cy and cz > cx:
-                n_tiles[0] *= 2
-            elif cy > cx:
-                n_tiles[1] *= 2
-            else:
-                n_tiles[2] *= 2
-
-            cz = z / n_tiles[0]
-            cy = y / n_tiles[1]
-            cx = x / n_tiles[2]
-
-        return n_tiles
-
     model.predict(even.data, odd.data, denoised.data, axes='ZYXC', normalizer=None, mean=mean, std=std,
-                  n_tiles=get_n_tiles(even.header.nz, even.header.ny, even.header.nx))
+                  n_tiles=config['n_tiles'] + [1, ])
 
     for l in even.header.dtype.names:
         if l == 'label':
