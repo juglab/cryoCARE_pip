@@ -106,7 +106,7 @@ To run the training we run the following command:
 `cryoCARE_predict.py --conf predict_config.json`
 
 ## Installation
-Please first install TensorFlow 2 by following the official instructions.
+Please first install TensorFlow 2.5 by following the official instructions.
 
 Then you can install cryoCARE with pip:
 `pip install cryoCARE`
