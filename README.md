@@ -39,7 +39,7 @@ Create an empty file called `train_data_config.json`, copy-paste the following t
 * `"num_slices"`: Number of sub-volumes extracted per tomograms. 
 * `"tilt_axis"`: Tilt-axis of the tomograms. We split the tomogram along this axis to extract train- and validation data separately.
 * `"n_normalization_samples"`: Number of sub-volumes extracted per tomograms, which are used to compute `mean` and `standard deviation` for normalization.
-* `"path"`: Path to which the training and validation data is saved.
+* `"path"`: Reference path for the project. All output will be saved here. In this step, the training and validation data is saved here.
 
 #### Run Training Data Preparation:
 After installation of the package we have access to built in Python-scripts which we can call. 
@@ -73,7 +73,7 @@ Create an empty file called `train_config.json`, copy-paste the following templa
 * `"unet_n_first"`: Number of initial feature channels.
 * `"learning_rate"`: Learning rate of the model training.
 * `"model_name"`: Name of the model.
-* `"path"`: Path to which the model is saved.
+* `"path"`: Needs to be the same as in step 1. In this step the model is saved here.
 
 #### Run Training:
 To run the training we run the following command:
