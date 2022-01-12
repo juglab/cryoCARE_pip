@@ -106,7 +106,7 @@ To run the training we run the following command:
 `cryoCARE_predict.py --conf predict_config.json`
 
 ## Installation
-Create a the following conda environment with:
+Create the following conda environment with:
 `conda create -n cryocare -c conda-forge -c anaconda python=3 cudatoolkit=11.2 cudnn=8.1 keras=2.3.1`
 
 Then activate it with:
