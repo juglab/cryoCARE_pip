@@ -87,10 +87,13 @@ Create an empty file called `predict_config.json`, copy-paste the following temp
   "path": "./",
   "even": "/path/to/even.rec",
   "odd": "/path/to/odd.rec",
-  "n_tiles": [1, 1, 1],
+  "n_tiles": [3, 3, 3],
   "output_name": "denoised.rec"
 }
 ```
+
+The prediction is very memory (not GPU memory) intensive. Therefore we set the n_tiles to 3. With that configuration it uses in our tests (with a tomogram of size 700x1440x1024) up to 45GB of system memory. If your system does not have so much memory please increase it even further.
+
 __Note:__ Currently only a single tomogram can be denoised at a time i.e. if you want to denoise multiple tomograms you have to run this step for each tomo individually.
 
 #### Parameters:
