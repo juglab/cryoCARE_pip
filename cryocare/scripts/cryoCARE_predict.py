@@ -11,12 +11,12 @@ from cryocare.internals.CryoCAREDataModule import CryoCARE_DataModule
 
 import psutil
 
-def denoise(config: dict, mean: float, std: float):
+def denoise(config: dict, mean: float, std: float, even: str, odd: str, output_file: str):
     model = CryoCARE(None, config['model_name'], basedir=config['path'])
 
-    even = mrcfile.mmap(config['even'], mode='r', permissive=True)
-    odd = mrcfile.mmap(config['odd'], mode='r', permissive=True)
-    denoised = mrcfile.new_mmap(join(config['path'], config['output_name']), even.data.shape, mrc_mode=2,
+    even = mrcfile.mmap(even, mode='r', permissive=True)
+    odd = mrcfile.mmap(odd, mode='r', permissive=True)
+    denoised = mrcfile.new_mmap(output_file, even.data.shape, mrc_mode=2,
                                 overwrite=True)
 
     even.data.shape += (1,)
@@ -59,17 +59,28 @@ def main():
             tar.close()
             config['model_name'] = os.listdir(tmpdirname)[0]
             config['path'] = os.path.join(tmpdirname)
-            # Opening JSON file
             with open(os.path.join(tmpdirname,config['model_name'],"norm.json")) as f:
                 norm_data = json.load(f)
                 mean = norm_data["mean"]
                 std = norm_data["std"]
-            denoise(config, mean, std)
+            os.makedirs(config['output'])
+
+            from glob import glob
+            if os.path.isdir(config['even']) and os.path.isdir(config['odd']):
+                all_even = glob(os.path.join(config['even'],"*.mrc"))
+                all_odd = glob(os.path.join(config['odd'],"*.mrc"))
+            else:
+                all_even = [config['even']]
+                all_odd = [config['odd']]
+
+            for even,odd in zip(all_even,all_odd):
+                out_filename = os.path.join(config['output'], os.path.basename(even))
+                denoise(config, mean, std, even=even, odd=odd, output_file=out_filename)
     else:
         dm = CryoCARE_DataModule()
         dm.load(config['path'])
         mean, std = dm.train_dataset.mean, dm.train_dataset.std
-        denoise(config,mean,std)
+        denoise(config, mean, std, even=config['even'], odd=config['odd'], output_file=join(config['path'], config['output_name']))
 
 
 
