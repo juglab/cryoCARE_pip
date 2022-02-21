@@ -3,8 +3,8 @@
 This package is a customized fork of [cryoCARE](https://github.com/juglab/cryoCARE_pip).
 
 Compared to the original implementation, the **"MPI Dortmund" edition** contains the following changes:
-* `cyroCARE_train` produces new, compressed and more protable model. This model can be copied and shared with others without relying on a certain folder structure.
-* `cryoCARE_predict` supports to predict multiple tomograms in one run. Streamlined with respect to the changes of `cryoCARE_train`.
+* `cyroCARE_train` produces a compressed and more portable model. This model can be copied and shared with others without relying on a certain folder structure.
+* `cryoCARE_predict` supports to predict multiple tomograms in one run. Streamlined configuration with respect to the changes of `cryoCARE_train`.
 * Streamlined installation instructions
 * Minor changes/ fixed couple of bugs:
     * Proper padding of tomograms to avoid black frames in the denoised tomograms
