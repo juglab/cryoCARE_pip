@@ -13,7 +13,9 @@ Compared to the original implementation, the **"MPI Dortmund" edition** contains
 This setup trains a denoising U-Net for tomographic reconstruction according to the [Noise2Noise](https://arxiv.org/pdf/1803.04189.pdf) training paradigm. 
 Therefor the user has to provide two tomograms of the same sample. 
 The simplest way to achieve this is with direct-detector movie-frames.
-These movie-frames can be split in two halves (e.g. with MotionCor2 `-SplitSum 1` or with IMOD `alignframes -debug 10000`) from which two identical, up to random noise, tomograms can be reconsturcted. 
+
+You can use Warp to generate two reconstructed tomograms based on the even/odd frames. Alternatively, the movie-frames can be split in two halves (e.g. with MotionCor2 `-SplitSum 1` or with IMOD `alignframes -debug 10000`) from which two identical, up to random noise, tomograms can be reconstructed. 
+
 These two (even and odd) tomograms can be used as input to this cryoCARE implementation.
 
 ## Manual
