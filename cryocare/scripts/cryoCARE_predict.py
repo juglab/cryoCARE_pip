@@ -5,29 +5,54 @@ from os.path import join
 import datetime
 import mrcfile
 import numpy as np
+from typing import Tuple
+from numpy.typing import NDArray
 
 from cryocare.internals.CryoCARE import CryoCARE
 from cryocare.internals.CryoCAREDataModule import CryoCARE_DataModule
 
 import psutil
 
+def pad(volume: NDArray, div_by: Tuple) -> NDArray:
+    pads = []
+    for axis_index, axis_size in enumerate(volume.shape):
+        pad_by = axis_size%div_by[axis_index]
+        pads.append([0,pad_by])
+    volume_padded = np.pad(volume, pads, mode='mean')
+
+    return volume_padded
+
+
+
 def denoise(config: dict, mean: float, std: float, even: str, odd: str, output_file: str):
     model = CryoCARE(None, config['model_name'], basedir=config['path'])
 
     even = mrcfile.mmap(even, mode='r', permissive=True)
     odd = mrcfile.mmap(odd, mode='r', permissive=True)
-    denoised = mrcfile.new_mmap(output_file, even.data.shape, mrc_mode=2,
-                                overwrite=True)
+    shape_before_pad = even.data.shape
+    even_vol = even.data
+    odd_vol = odd.data
 
-    even.data.shape += (1,)
-    odd.data.shape += (1,)
-    denoised.data.shape += (1,)
+    div_by = model._axes_div_by('XYZ')
+    even_vol = pad(even_vol,div_by=div_by)
+    odd_vol = pad(odd_vol, div_by=div_by)
 
-    # mean = 0.46514022
-    # std = 0.373164
+    denoised = np.zeros(even_vol.shape)
 
-    model.predict(even.data, odd.data, denoised.data, axes='ZYXC', normalizer=None, mean=mean, std=std,
+    even_vol.shape += (1,)
+    odd_vol.shape += (1,)
+    denoised.shape += (1,)
+
+    model.predict(even_vol, odd_vol, denoised, axes='ZYXC', normalizer=None, mean=mean, std=std,
                   n_tiles=config['n_tiles'] + [1, ])
+
+    denoised = denoised[slice(0, shape_before_pad[0]), slice(0, shape_before_pad[1]), slice(0, shape_before_pad[2])]
+    mrc = mrcfile.new_mmap(output_file, denoised.shape, mrc_mode=2, overwrite=True)
+    mrc.data[:] = denoised
+
+
+
+
 
     for l in even.header.dtype.names:
         if l == 'label':
@@ -36,10 +61,10 @@ def denoise(config: dict, mean: float, std: float, even: str, odd: str, output_f
                     "%d-%b-%y  %H:%M:%S") + "     "]),
                                         np.array([''])))
             print(new_label)
-            denoised.header[l] = new_label
+            mrc.header[l] = new_label
         else:
-            denoised.header[l] = even.header[l]
-    denoised.header['mode'] = 2
+            mrc.header[l] = even.header[l]
+    mrc.header['mode'] = 2
 
 def main():
     parser = argparse.ArgumentParser(description='Run cryoCARE prediction.')
