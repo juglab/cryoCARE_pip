@@ -3,7 +3,7 @@
 
 This package is a fork of a memory efficient implementation of [cryoCARE](https://github.com/juglab/cryoCARE_T2T).
 
-Compared to the original implementation, the "MPI Dortmund" edition contains the following changes:
+Compared to the original implementation, the *"MPI Dortmund" edition* contains the following changes:
 * `cyroCARE_train` produces new, compressed and more protable model. This model can be copied and shared with others without relying on a certain folder structure.
 * `cryoCARE_predict` supports to predict multiple tomograms in one run
 * Streamlined installation instructions
