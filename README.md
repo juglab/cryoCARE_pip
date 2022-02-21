@@ -5,12 +5,11 @@ This package is a fork of a memory efficient implementation of [cryoCARE](https:
 
 Compared to the original implementation, the **"MPI Dortmund" edition** contains the following changes:
 * `cyroCARE_train` produces new, compressed and more protable model. This model can be copied and shared with others without relying on a certain folder structure.
-* `cryoCARE_predict` supports to predict multiple tomograms in one run
+* `cryoCARE_predict` supports to predict multiple tomograms in one run. Streamlined with respect to the changes of `cryoCARE_train`.
 * Streamlined installation instructions
 * Minor changes/ fixed couple of bugs:
     * Proper padding of tomograms to avoid black frames in the denoised tomograms
     * Fix computation of validation cut off for small tomograms
-
 
 This setup trains a denoising U-Net for tomographic reconstruction according to the [Noise2Noise](https://arxiv.org/pdf/1803.04189.pdf) training paradigm. 
 Therefor the user has to provide two tomograms of the same sample. 
@@ -52,7 +51,7 @@ Create an empty file called `train_data_config.json`, copy-paste the following t
 * `"num_slices"`: Number of sub-volumes extracted per tomograms. 
 * `"tilt_axis"`: Tilt-axis of the tomograms. We split the tomogram along this axis to extract train- and validation data separately.
 * `"n_normalization_samples"`: Number of sub-volumes extracted per tomograms, which are used to compute `mean` and `standard deviation` for normalization.
-* `"path"`: Reference path for the project. All output will be saved here. In this step, the training and validation data is saved here.
+* `"path"`: The training and validation data are saved here.
 
 #### Run Training Data Preparation:
 After installation of the package we have access to built in Python-scripts which we can call. 
@@ -86,7 +85,7 @@ Create an empty file called `train_config.json`, copy-paste the following templa
 * `"unet_n_first"`: Number of initial feature channels.
 * `"learning_rate"`: Learning rate of the model training.
 * `"model_name"`: Name of the model.
-* `"path"`: Needs to be the same as in step 1. In this step the model is saved here.
+* `"path"`: Output path for the model.
 
 #### Run Training:
 To run the training we run the following command:
