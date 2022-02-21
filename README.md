@@ -1,6 +1,6 @@
 # cryoCARE (MPI Dortmund Edition)
 
-This package is a fork of [cryoCARE](https://github.com/juglab/cryoCARE_pip).
+This package is a customized fork of [cryoCARE](https://github.com/juglab/cryoCARE_pip).
 
 Compared to the original implementation, the **"MPI Dortmund" edition** contains the following changes:
 * `cyroCARE_train` produces new, compressed and more protable model. This model can be copied and shared with others without relying on a certain folder structure.
