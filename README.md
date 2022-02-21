@@ -92,52 +92,30 @@ Create an empty file called `train_config.json`, copy-paste the following templa
 To run the training we run the following command:
 `cryoCARE_train.py --conf train_config.json`
 
+You will find a `.tar.gz` file in the directory you specified as `path`. This your model an will be used in the next step.
+
 ### 3. Prediction
 Create an empty file called `predict_config.json`, copy-paste the following template and fill it in.
 ```
 {
-  "model_name": "model_name",
-  "path": "./",
-  "even": "/path/to/even.rec",
-  "odd": "/path/to/odd.rec",
-  "n_tiles": [3, 3, 3],
-  "output_name": "denoised.rec"
+  "path": "path/to/your/model.tar.gz",
+  "even": "/path/to/even/tomos/",
+  "odd": "/path/to/odd/tomos/",
+  "n_tiles": [1, 1, 1],
+  "output": "/path/to/output/folder/"
 }
 ```
 
-The prediction is very memory (not GPU memory) intensive. Therefore we set the n_tiles to 3. With that configuration it uses in our tests (with a tomogram of size 700x1440x1024) up to 45GB of system memory. If your system does not have so much memory please increase it even further.
-
-__Note:__ Currently only a single tomogram can be denoised at a time i.e. if you want to denoise multiple tomograms you have to run this step for each tomo individually.
-
 #### Parameters:
-* `"model_name"`: Name of the trained model which should be used.
-* `"path"`: Path to the parent directory where the model is stored. This corresponds to `"path"` in the `train_config.json`.
-* `"even"`: Path to the even tomogram.
-* `"odd"`: Path to the odd tomogram.
+* `"path"`: Path to your model file.
+* `"even"`: Path to directory with even tomograms or a specific even tomogram.
+* `"odd"`: Path to directory with odd tomograms or a specific odd tomogram.
 * `"n_tiles"`: Initial tiles per dimension. Gets increased if the tiles do not fit on the GPU.
-* `"output_name"`: Name of the denoised tomogram.
+* `"output"`: Path where the denoised tomograms will be written.
 
 #### Run Prediction:
 To run the training we run the following command:
 `cryoCARE_predict.py --conf predict_config.json`
-
-## Installation
-Create the following conda environment with:
-```
-conda create -n cryocare -c conda-forge -c anaconda python=3 keras-gpu=2.3.1
-```
-
-Then activate it with:
-```
-conda activate cryocare
-```
-
-Then you can install cryoCARE with pip:
-```
-pip install cryoCARE
-```
-
-__Note:__ I would recommend to use [miniconda](https://docs.conda.io/en/latest/miniconda.html) or [singularity](https://sylabs.io/guides/3.0/user-guide/quick_start.html) to manage environments and versions.
 
 ## How to Cite
 ```
