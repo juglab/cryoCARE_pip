@@ -32,8 +32,11 @@ def denoise(config: dict, mean: float, std: float, even: str, odd: str, output_f
     shape_before_pad = even.data.shape
     even_vol = even.data
     odd_vol = odd.data
+    even_vol = even_vol
+    odd_vol = odd_vol
 
     div_by = model._axes_div_by('XYZ')
+
     even_vol = pad(even_vol,div_by=div_by)
     odd_vol = pad(odd_vol, div_by=div_by)
 
@@ -91,6 +94,7 @@ def main():
             os.makedirs(config['output'])
 
             from glob import glob
+
             if os.path.isdir(config['even']) and os.path.isdir(config['odd']):
                 all_even = glob(os.path.join(config['even'],"*.mrc"))
                 all_odd = glob(os.path.join(config['odd'],"*.mrc"))
