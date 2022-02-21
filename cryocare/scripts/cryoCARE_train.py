@@ -50,7 +50,7 @@ def main():
 
     import tarfile
     import os
-    with tarfile.open(join(config['path'], config['model_name'], f"{config['model_name']}.tar.gz"), "w:gz") as tar:
+    with tarfile.open(join(config['path'], f"{config['model_name']}.tar.gz"), "w:gz") as tar:
         tar.add(join(config['path'], config['model_name']), arcname=os.path.basename(join(config['path'], config['model_name'])))
 
 
