@@ -23,12 +23,15 @@ These two (even and odd) tomograms can be used as input to this cryoCARE impleme
 __Note:__ We assume that you have  [miniconda](https://docs.conda.io/en/latest/miniconda.html) installed.
 
 Create a the following conda environment with:
+
 `conda create -n cryocare -c conda-forge -c anaconda python=3 keras-gpu=2.3.1`
 
 Then activate it with:
+
 `conda activate cryocare`
 
 Then you can install cryoCARE with pip:
+
 `pip install cryoCARE_mpido`
 
 ## Manual
