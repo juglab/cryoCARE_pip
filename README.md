@@ -22,18 +22,16 @@ These two (even and odd) tomograms can be used as input to this cryoCARE impleme
 
 __Note:__ We assume that you have  [miniconda](https://docs.conda.io/en/latest/miniconda.html) installed.
 
-First you need to create a conda environment.
+Create a the following conda environment with:
 
-For CUDA 11:
-`conda create -n cryocare_c11 -c conda-forge -c anaconda python=3 keras-gpu=2.3.1 cudatoolkit=11`
-
-For CUDA 10:
 `conda create -n cryocare -c conda-forge -c anaconda python=3 keras-gpu=2.3.1`
 
 Then activate it with:
+
 `conda activate cryocare`
 
 Then you can install cryoCARE with pip:
+
 `pip install cryoCARE_mpido`
 
 ## Manual
@@ -59,8 +57,7 @@ Create an empty file called `train_data_config.json`, copy-paste the following t
   "split": 0.9,
   "tilt_axis": "Y",
   "n_normalization_samples": 500,
-  "path": "./",
-  "overwrite": false
+  "path": "./"
 }
 ```
 #### Parameters:
