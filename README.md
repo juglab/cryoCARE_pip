@@ -18,6 +18,24 @@ You can use Warp to generate two reconstructed tomograms based on the even/odd f
 
 These two (even and odd) tomograms can be used as input to this cryoCARE implementation.
 
+## Installation
+
+__Note:__ We assume that you have  [miniconda](https://docs.conda.io/en/latest/miniconda.html) installed.
+
+First you need to create a conda environment.
+
+For CUDA 11:
+`conda create -n cryocare_c11 -c conda-forge -c anaconda python=3 keras-gpu=2.3.1 cudatoolkit=11`
+
+For CUDA 10:
+`conda create -n cryocare -c conda-forge -c anaconda python=3 keras-gpu=2.3.1`
+
+Then activate it with:
+`conda activate cryocare`
+
+Then you can install cryoCARE with pip:
+`pip install cryoCARE_mpido`
+
 ## Manual
 cryoCARE uses `.json` configuration files and is run in three steps:
 
