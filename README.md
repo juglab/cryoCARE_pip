@@ -33,7 +33,7 @@ pip install keras==2.3.1
 pip install 'cryoCARE_mpido[c11]'
 ```
 
-###For CUDA 10:
+### For CUDA 10:
 ```
 conda create -n cryocare -c conda-forge -c anaconda python=3 keras-gpu=2.3.1`
 conda activate cryocare
