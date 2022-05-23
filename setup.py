@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cryoCARE_mpido",
-    version="0.2",
+    version="0.2.1",
     author="Thorsten Wagner",
     author_email="thorsten.wagner@mpi-dortmund.mpg.de",
     description="cryoCARE is a deep learning approach for cryo-TEM tomogram denoising.",
@@ -13,6 +13,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/thorstenwagner/cryoCARE_pip",
     packages=setuptools.find_packages(),
+    extras_require={
+        'c11': ['nvidia-tensorflow[horovod] < 1.16, >= 1.15.5+nv22.1'],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "Development Status :: 4 - Beta",
