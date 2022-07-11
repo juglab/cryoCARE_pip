@@ -28,7 +28,7 @@ setuptools.setup(
         "numpy",
         "mrcfile",
         "csbdeep>=0.6.0,<0.7.0",
-        "packaging"
+        "packaging",
         "psutil"
     ],
     scripts=[
