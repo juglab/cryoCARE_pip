@@ -91,11 +91,14 @@ def main():
                 norm_data = json.load(f)
                 mean = norm_data["mean"]
                 std = norm_data["std"]
-            os.makedirs(config['output'])
+            if not os.path.exists(config['output']):
+                os.makedirs(config['output'])
 
             from glob import glob
-
-            if os.path.isdir(config['even']) and os.path.isdir(config['odd']):
+            if type(config['even']) is list:
+                all_even=tuple(config['even'])
+                all_odd=tuple(config['odd'])
+            elif os.path.isdir(config['even']) and os.path.isdir(config['odd']):
                 all_even = glob(os.path.join(config['even'],"*.mrc"))
                 all_odd = glob(os.path.join(config['odd'],"*.mrc"))
             else:
