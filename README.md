@@ -107,14 +107,19 @@ To run the training we run the following command:
 
 ## Installation
 Create the following conda environment with:
-`conda create -n cryocare -c conda-forge -c anaconda python=3 keras-gpu=2.3.1`
-
+```
+conda create -n cryocare -c conda-forge -c anaconda python=3 keras-gpu=2.3.1
+```
 
 Then activate it with:
-`conda activate cryocare`
+```
+conda activate cryocare
+```
 
 Then you can install cryoCARE with pip:
-`pip install cryoCARE`
+```
+pip install cryoCARE
+```
 
 __Note:__ I would recommend to use [miniconda](https://docs.conda.io/en/latest/miniconda.html) or [singularity](https://sylabs.io/guides/3.0/user-guide/quick_start.html) to manage environments and versions.
 
