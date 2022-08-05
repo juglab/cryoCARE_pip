@@ -26,7 +26,7 @@ First you need to create a conda environment.
 
 ### For CUDA 11:
 ```
-mamba create -n cryocare_c11 -c conda-forge -c anaconda python=3.8
+conda create -n cryocare_c11 -c conda-forge -c anaconda python=3.8
 pip install nvidia-pyindex
 pip install 'cryoCARE_mpido[c11]'
 ```
