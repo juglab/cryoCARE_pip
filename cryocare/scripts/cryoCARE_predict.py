@@ -109,6 +109,7 @@ def main():
                 out_filename = os.path.join(config['output'], os.path.basename(even))
                 denoise(config, mean, std, even=even, odd=odd, output_file=out_filename)
     else:
+        # Fall back to original cryoCARE implmentation
         dm = CryoCARE_DataModule()
         dm.load(config['path'])
         mean, std = dm.train_dataset.mean, dm.train_dataset.std
