@@ -2,9 +2,13 @@
 import argparse
 import json
 from os.path import join
+import os
+import tarfile
+import tempfile
 import datetime
 import mrcfile
 import numpy as np
+import sys
 from typing import Tuple
 from numpy.typing import NDArray
 
@@ -77,9 +81,17 @@ def main():
     with open(args.conf, 'r') as f:
         config = json.load(f)
 
-    import os
-    import tarfile
-    import tempfile
+    try:
+        os.makedirs(config['output'])
+    except OSError:
+        if 'overwrite' in config and config['overwrite']:
+            os.makedirs(config['output'], exist_ok=True)
+        else:
+            print("Output directory already exists. Please choose new output directory or set 'overwrite' to 'true' in your configuration file.")
+
+            sys.exit(1)
+
+
     if os.path.isfile(config['path']):
         with tempfile.TemporaryDirectory() as tmpdirname:
             tar = tarfile.open(config['path'], "r:gz")
@@ -92,7 +104,7 @@ def main():
                 mean = norm_data["mean"]
                 std = norm_data["std"]
 
-            os.makedirs(config['output'], exist_ok=True)
+
 
             from glob import glob
             if type(config['even']) is list:
