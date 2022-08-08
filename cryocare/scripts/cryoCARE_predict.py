@@ -91,8 +91,8 @@ def main():
                 norm_data = json.load(f)
                 mean = norm_data["mean"]
                 std = norm_data["std"]
-            if not os.path.exists(config['output']):
-                os.makedirs(config['output'])
+
+            os.makedirs(config['output'], exist_ok=True)
 
             from glob import glob
             if type(config['even']) is list:
