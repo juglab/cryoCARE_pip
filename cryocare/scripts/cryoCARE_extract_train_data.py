@@ -29,10 +29,10 @@ def main():
                              tilt_axis=config['tilt_axis'], n_normalization_samples=config['n_normalization_samples'])
     
     try:
-        os.makedirs(config['output'])
+        os.makedirs(config['path'])
     except OSError:
         if 'overwrite' in config and config['overwrite']:
-            os.makedirs(config['output'], exist_ok=True)
+            os.makedirs(config['path'], exist_ok=True)
         else:
             print("Output directory already exists. Please choose a new output directory or set 'overwrite' to 'true' in your configuration file.")
             sys.exit(1)
