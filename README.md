@@ -121,7 +121,8 @@ Create an empty file called `predict_config.json`, copy-paste the following temp
   "even": "/path/to/even/tomos/",
   "odd": "/path/to/odd/tomos/",
   "n_tiles": [1, 1, 1],
-  "output": "/path/to/output/folder/"
+  "output": "/path/to/output/folder/",
+  "overwrite": false
 }
 ```
 
