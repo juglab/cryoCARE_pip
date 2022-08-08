@@ -87,8 +87,7 @@ def main():
         if 'overwrite' in config and config['overwrite']:
             os.makedirs(config['output'], exist_ok=True)
         else:
-            print("Output directory already exists. Please choose new output directory or set 'overwrite' to 'true' in your configuration file.")
-
+            print("Output directory already exists. Please choose a new output directory or set 'overwrite' to 'true' in your configuration file.")
             sys.exit(1)
 
 
