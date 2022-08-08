@@ -29,7 +29,8 @@ Create an empty file called `train_data_config.json`, copy-paste the following t
   "split": 0.9,
   "tilt_axis": "Y",
   "n_normalization_samples": 500,
-  "path": "./"
+  "path": "./",
+  "overwrite": false
 }
 ```
 #### Parameters:

@@ -2,6 +2,8 @@
 import argparse
 import json
 import warnings
+import os
+import sys
 from cryocare.internals.CryoCAREDataModule import CryoCARE_DataModule
 
 
@@ -25,6 +27,16 @@ def main():
     dm.setup(config['odd'], config['even'], n_samples_per_tomo=config['num_slices'],
                              validation_fraction=(1.0 - config['split']), sample_shape=config['patch_shape'],
                              tilt_axis=config['tilt_axis'], n_normalization_samples=config['n_normalization_samples'])
+    
+    try:
+        os.makedirs(config['path'])
+    except OSError:
+        if 'overwrite' in config and config['overwrite']:
+            os.makedirs(config['path'], exist_ok=True)
+        else:
+            print("Output directory already exists. Please choose a new output directory or set 'overwrite' to 'true' in your configuration file.")
+            sys.exit(1)
+            
     dm.save(config['path'])
 
 
