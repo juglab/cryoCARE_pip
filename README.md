@@ -28,7 +28,7 @@ First you need to create a conda environment.
 ```
 conda create -n cryocare_c11 -c conda-forge -c anaconda python=3.8
 pip install nvidia-pyindex
-pip install keras=2.3.1
+pip install keras==2.3.1
 pip install 'cryoCARE_mpido[c11]'
 ```
 
