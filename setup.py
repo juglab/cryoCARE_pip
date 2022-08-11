@@ -21,7 +21,7 @@ setuptools.setup(
         "Topic :: Scientific/Engineering",
         "License :: OSI Approved :: BSD License"
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     install_requires=[
         "numpy",
         "mrcfile",
