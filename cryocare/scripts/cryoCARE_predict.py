@@ -120,9 +120,15 @@ def main():
                 denoise(config, mean, std, even=even, odd=odd, output_file=out_filename)
     else:
         # Fall back to original cryoCARE implmentation
+        print("Your config is not in the format that cryoCARE >=0.2 requires. Fallback to cryCARE 0.1 format.")
+        if 'output_name' not in config or os.path.isfile(config['path']):
+            print("Invalid config format.")
+            sys.exit(1)
+
         dm = CryoCARE_DataModule()
         dm.load(config['path'])
         mean, std = dm.train_dataset.mean, dm.train_dataset.std
+
         denoise(config, mean, std, even=config['even'], odd=config['odd'], output_file=join(config['path'], config['output_name']))
 
 
