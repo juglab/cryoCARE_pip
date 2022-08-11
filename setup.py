@@ -6,12 +6,12 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="cryoCARE_mpido",
     version="0.2.2",
-    author="Thorsten Wagner",
-    author_email="thorsten.wagner@mpi-dortmund.mpg.de",
+    author="Tim-Oliver Buchholz, Thorsten Wagner",
+    author_email="tibuch@mpi-cbg.de, thorsten.wagner@mpi-dortmund.mpg.de",
     description="cryoCARE is a deep learning approach for cryo-TEM tomogram denoising.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/thorstenwagner/cryoCARE_pip",
+    url="https://github.com/juglab/cryoCARE_pip",
     packages=setuptools.find_packages(),
 
     classifiers=[
