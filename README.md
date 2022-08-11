@@ -17,6 +17,7 @@ These two (even and odd) tomograms can be used as input to this cryoCARE impleme
 * `cyroCARE_train` produces a compressed and more portable model. This model can be copied and shared with others without relying on a certain folder structure.
 * `cryoCARE_predict` supports to predict multiple tomograms in one run. Streamlined configuration with respect to the changes of `cryoCARE_train`.
 * Streamlined installation instructions
+* CUDA 11 support
 * Minor changes/ fixed couple of bugs:
     * Proper padding of tomograms to avoid black frames in the denoised tomograms
     * Fix computation of validation cut off for small tomograms
