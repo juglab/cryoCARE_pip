@@ -26,17 +26,17 @@ First you need to create a conda environment.
 
 ### For CUDA 11:
 ```
-conda create -n cryocare_c11 -c conda-forge -c anaconda python=3.8
-pip install nvidia-pyindex
-pip install keras==2.3.1
-pip install 'cryoCARE_mpido[c11]'
+conda create -n cryoCARE_11 python=3.8 cudatoolkit=11.0 cudnn=8.0 -c conda-forge
+conda activate cryoCARE_11
+pip install tensorflow==2.4
+pip install cryoCARE
 ```
 
 ### For CUDA 10:
 ```
 conda create -n cryocare -c conda-forge -c anaconda python=3 keras-gpu=2.3.1
 conda activate cryocare
-pip install cryoCARE_mpido
+pip install cryoCARE
 ```
 
 ## Manual
