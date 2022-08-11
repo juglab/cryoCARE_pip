@@ -10,14 +10,13 @@ import mrcfile
 import numpy as np
 import sys
 from typing import Tuple
-from numpy.typing import NDArray
 
 from cryocare.internals.CryoCARE import CryoCARE
 from cryocare.internals.CryoCAREDataModule import CryoCARE_DataModule
 
 import psutil
 
-def pad(volume: NDArray, div_by: Tuple) -> NDArray:
+def pad(volume: np.array, div_by: Tuple) -> np.array:
     pads = []
     for axis_index, axis_size in enumerate(volume.shape):
         pad_by = axis_size%div_by[axis_index]
