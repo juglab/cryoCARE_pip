@@ -13,7 +13,6 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/juglab/cryoCARE_pip",
     packages=setuptools.find_packages(),
-
     classifiers=[
         "Programming Language :: Python :: 3",
         "Development Status :: 4 - Beta",
@@ -26,7 +25,6 @@ setuptools.setup(
         "numpy",
         "mrcfile",
         "csbdeep>=0.7.0,<0.8.0",
-        "packaging",
         "psutil"
     ],
     scripts=[
