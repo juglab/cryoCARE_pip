@@ -34,10 +34,26 @@ def main():
     model = CryoCARE(net_conf, config['model_name'], basedir=config['path'])
 
     history = model.train(dm.get_train_dataset(), dm.get_val_dataset())
+    mean, std = dm.train_dataset.mean, dm.train_dataset.std
 
-    print(list(history.history.keys()))
     with open(join(config['path'], config['model_name'], 'history.dat'), 'wb+') as f:
         pickle.dump(history.history, f)
+
+
+    # Write norm to disk
+    norm = {
+        "mean": float(mean),
+        "std": float(std)
+    }
+    with open(join(config['path'], config['model_name'], 'norm.json'), 'w') as fp:
+        json.dump(norm, fp)
+
+    import tarfile
+    import os
+    with tarfile.open(join(config['path'], f"{config['model_name']}.tar.gz"), "w:gz") as tar:
+        tar.add(join(config['path'], config['model_name']), arcname=os.path.basename(join(config['path'], config['model_name'])))
+
+
 
 if __name__ == "__main__":
     main()

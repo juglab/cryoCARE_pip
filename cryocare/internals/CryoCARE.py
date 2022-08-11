@@ -3,7 +3,7 @@ from csbdeep.internals.predict import Progress, total_n_tiles, tile_iterator_1d,
 from csbdeep.models import CARE
 from csbdeep.utils import _raise, axes_check_and_normalize, axes_dict
 import warnings
-
+import logging
 import numpy as np
 import tensorflow as tf
 
@@ -29,6 +29,7 @@ class CryoCARE(CARE):
         ``History`` object
             See `Keras training history <https://keras.io/models/model/#fit>`_.
         """
+        logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
         axes = axes_check_and_normalize('S' + self.config.axes, len(train_dataset.element_spec[0].shape) + 1)
         ax = axes_dict(axes)
@@ -254,7 +255,10 @@ def predict_tiled(keras_model, even, odd, output, s_src_out, s_dst_out, mean, st
             pred = pred[src]
         if pbar is not None:
             pbar.update()
-        output[:] = pred[:]
+
+        if output.shape == pred.shape:
+            output[:] = pred[:]
+
         return pred
 
     ###
