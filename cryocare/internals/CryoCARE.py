@@ -256,6 +256,9 @@ def predict_tiled(keras_model, even, odd, output, s_src_out, s_dst_out, mean, st
         if pbar is not None:
             pbar.update()
 
+        if output.shape == pred.shape:
+            output[:] = pred[:]
+
         return pred
 
     ###
