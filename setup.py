@@ -13,9 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/thorstenwagner/cryoCARE_pip",
     packages=setuptools.find_packages(),
-    extras_require={
-        'c11': ['nvidia-tensorflow[horovod] < 1.16, >= 1.15.5+nv22.1'],
-    },
+
     classifiers=[
         "Programming Language :: Python :: 3",
         "Development Status :: 4 - Beta",
