@@ -30,8 +30,8 @@ First you need to create a conda environment.
 
 ### For CUDA 11:
 ```
-conda create -n cryoCARE_11 python=3.8 cudatoolkit=11.0 cudnn=8.0 -c conda-forge
-conda activate cryoCARE_11
+conda create -n cryocare_11 python=3.8 cudatoolkit=11.0 cudnn=8.0 -c conda-forge
+conda activate cryocare_11
 pip install tensorflow==2.4
 pip install cryoCARE
 ```
