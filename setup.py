@@ -27,7 +27,7 @@ setuptools.setup(
     install_requires=[
         "numpy",
         "mrcfile",
-        "csbdeep>=0.6.0,<0.7.0",
+        "csbdeep>=0.7.0,<0.8.0",
         "packaging",
         "psutil"
     ],
