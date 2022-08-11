@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="cryoCARE_mpido",
+    name="cryoCARE",
     version="0.2.2",
     author="Tim-Oliver Buchholz, Thorsten Wagner",
     author_email="tibuch@mpi-cbg.de, thorsten.wagner@mpi-dortmund.mpg.de",
