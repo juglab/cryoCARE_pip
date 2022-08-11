@@ -1,14 +1,6 @@
-# cryoCARE (MPI Dortmund Edition)
+# cryoCARE
 
-This package is a customized fork of [cryoCARE](https://github.com/juglab/cryoCARE_pip).
-
-Compared to the original implementation, the **"MPI Dortmund" edition** contains the following changes:
-* `cyroCARE_train` produces a compressed and more portable model. This model can be copied and shared with others without relying on a certain folder structure.
-* `cryoCARE_predict` supports to predict multiple tomograms in one run. Streamlined configuration with respect to the changes of `cryoCARE_train`.
-* Streamlined installation instructions
-* Minor changes/ fixed couple of bugs:
-    * Proper padding of tomograms to avoid black frames in the denoised tomograms
-    * Fix computation of validation cut off for small tomograms
+This package is a memory efficient implementation of [cryoCARE](https://github.com/juglab/cryoCARE_T2T). 
 
 This setup trains a denoising U-Net for tomographic reconstruction according to the [Noise2Noise](https://arxiv.org/pdf/1803.04189.pdf) training paradigm. 
 Therefore the user has to provide two tomograms of the same sample. 
@@ -17,6 +9,18 @@ The simplest way to achieve this is with direct-detector movie-frames.
 You can use Warp to generate two reconstructed tomograms based on the even/odd frames. Alternatively, the movie-frames can be split in two halves (e.g. with MotionCor2 `-SplitSum 1` or with IMOD `alignframes -debug 10000`) from which two identical, up to random noise, tomograms can be reconstructed. 
 
 These two (even and odd) tomograms can be used as input to this cryoCARE implementation.
+
+## Changelog
+
+### Version 0.2
+
+* `cyroCARE_train` produces a compressed and more portable model. This model can be copied and shared with others without relying on a certain folder structure.
+* `cryoCARE_predict` supports to predict multiple tomograms in one run. Streamlined configuration with respect to the changes of `cryoCARE_train`.
+* Streamlined installation instructions
+* Minor changes/ fixed couple of bugs:
+    * Proper padding of tomograms to avoid black frames in the denoised tomograms
+    * Fix computation of validation cut off for small tomograms
+    * Fix `cryoCARE_predict` if no tiling happens
 
 ## Installation
 
