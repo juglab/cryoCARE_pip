@@ -1,4 +1,4 @@
-#! python
+#!/scicore/home/engel0006/GROUP/pool-engel/soft/cryo-care/cryoCARE_pip/cryocare_11/bin/python3.8
 import argparse
 import json
 from cryocare.internals.CryoCARE import CryoCARE
@@ -6,6 +6,7 @@ from csbdeep.models import Config
 import pickle
 from os.path import join
 from cryocare.internals.CryoCAREDataModule import CryoCARE_DataModule
+import tensorflow as tf
 
 def main():
     parser = argparse.ArgumentParser(description='Load training config.')
@@ -31,9 +32,14 @@ def main():
         train_learning_rate=config['learning_rate']
     )
 
-    model = CryoCARE(net_conf, config['model_name'], basedir=config['path'])
+    mirrored_strategy = tf.distribute.MirroredStrategy()
 
-    history = model.train(dm.get_train_dataset(), dm.get_val_dataset())
+    with mirrored_strategy.scope():
+
+        model = CryoCARE(net_conf, config['model_name'], basedir=config['path'])
+
+        history = model.train(dm.get_train_dataset(), dm.get_val_dataset())
+        
     mean, std = dm.train_dataset.mean, dm.train_dataset.std
 
     with open(join(config['path'], config['model_name'], 'history.dat'), 'wb+') as f:
