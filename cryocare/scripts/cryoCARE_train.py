@@ -1,4 +1,4 @@
-#!/scicore/home/engel0006/GROUP/pool-engel/soft/cryo-care/cryoCARE_pip/cryocare_11/bin/python3.8
+#! python
 import argparse
 import json
 from cryocare.internals.CryoCARE import CryoCARE
