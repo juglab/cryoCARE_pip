@@ -9,12 +9,43 @@ import datetime
 import mrcfile
 import numpy as np
 import sys
+import tensorflow as tf
 from typing import Tuple
 
 from cryocare.internals.CryoCARE import CryoCARE
 from cryocare.internals.CryoCAREDataModule import CryoCARE_DataModule
 
 import psutil
+
+def set_gpu_id(config: dict):
+    if 'gpu_id' in config:
+        if type(config['gpu_id']) is list:
+            gpu_ids = config['gpu_id']
+            if len(gpu_ids) == 0:
+                raise RuntimeError('ERROR: List of GPU IDs is empty')
+        elif type(config['gpu_id']) is int:
+            gpu_ids = [config['gpu_id']]
+        else:
+            raise RuntimeError('gpu_id in json is neither a list nor an integer')
+    else:
+        if len(tf.config.list_physical_devices('GPU')) > 0:
+            gpu_ids = list(range(0,len(tf.config.list_physical_devices('GPU'))))
+        else:
+            print('WARNING: No GPUs found by tensorflow')
+    
+    #Check GPUs given by IDs exist and set_memory_growth to True
+    physical_devices = []
+    try:
+        for gpu in gpu_ids:
+            print(f'Looking for GPU with ID: {gpu}')
+            physical_devices = physical_devices + [tf.config.list_physical_devices('GPU')[gpu]]
+            print(f'GPU {gpu} successfully found')
+            tf.config.experimental.set_memory_growth(tf.config.list_physical_devices('GPU')[gpu], True)
+    except IndexError:
+        print(f'WARNING: GPU {gpu} not found')
+    
+    if len(physical_devices) > 0:
+        tf.config.set_visible_devices(physical_devices, 'GPU') 
 
 def pad(volume: np.array, div_by: Tuple) -> np.array:
     pads = []
@@ -73,6 +104,7 @@ def denoise(config: dict, mean: float, std: float, even: str, odd: str, output_f
     mrc.header['mode'] = 2
 
 def main():
+    
     parser = argparse.ArgumentParser(description='Run cryoCARE prediction.')
     parser.add_argument('--conf')
 
@@ -88,8 +120,9 @@ def main():
         else:
             print("Output directory already exists. Please choose a new output directory or set 'overwrite' to 'true' in your configuration file.")
             sys.exit(1)
-
-
+    
+    set_gpu_id(config)
+    
     if os.path.isfile(config['path']):
         with tempfile.TemporaryDirectory() as tmpdirname:
             tar = tarfile.open(config['path'], "r:gz")

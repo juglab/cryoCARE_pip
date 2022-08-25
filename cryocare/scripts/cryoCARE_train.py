@@ -6,6 +6,7 @@ from csbdeep.models import Config
 import pickle
 from os.path import join
 from cryocare.internals.CryoCAREDataModule import CryoCARE_DataModule
+from cryocare.scripts.cryoCARE_predict import set_gpu_id
 
 def main():
     parser = argparse.ArgumentParser(description='Load training config.')
@@ -15,6 +16,8 @@ def main():
     with open(args.conf, 'r') as f:
         config = json.load(f)
 
+    set_gpu_id(config)
+    
     dm = CryoCARE_DataModule()
     dm.load(config['train_data'])
 
