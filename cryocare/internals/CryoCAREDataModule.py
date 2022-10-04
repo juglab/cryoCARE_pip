@@ -11,10 +11,11 @@ from os.path import join
 class CryoCARE_Dataset(tf.keras.utils.Sequence):
     def __init__(self, tomo_paths_odd=None, tomo_paths_even=None, n_samples_per_tomo=None,
                  extraction_shapes=None, mean=None, std=None,
-                 sample_shape=(64, 64, 64), shuffle=True, n_normalization_samples=500):
+                 sample_shape=(64, 64, 64), shuffle=True, n_normalization_samples=500, tilt_axis=None):
         self.tomo_paths_odd = tomo_paths_odd
         self.tomo_paths_even = tomo_paths_even
         self.n_samples_per_tomo = n_samples_per_tomo
+        self.tilt_axis = tilt_axis
 
         self.extraction_shapes = extraction_shapes
         self.mean = mean
@@ -120,7 +121,16 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
 
         return np.stack([z_coords, y_coords, x_coords], -1)
 
-    def random_swapper(self, x, y):
+    def augment(self, x, y):
+        if self.tilt_axis is not None:
+            rot_k = np.random.randint(0, 4, x.shape[0])
+            rot_axes = tuple([0,1,2].remove(["Z", "Y", "X"].index(self.tilt_axis)))
+
+            for i in range(x.shape[0]):
+                x[i] = np.rot90(x[i], k=rot_k[i], axes=rot_axes)
+                y[i] = np.rot90(y[i], k=rot_k[i], axes=rot_axes)
+
+
         if np.random.rand() > 0.5:
             return y, x
         else:
@@ -141,7 +151,7 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
                         y:y + self.sample_shape[1],
                         x:x + self.sample_shape[2]]
 
-        return self.random_swapper(np.array(even_subvolume)[..., np.newaxis], np.array(odd_subvolume)[..., np.newaxis])
+        return self.augment(np.array(even_subvolume)[..., np.newaxis], np.array(odd_subvolume)[..., np.newaxis])
 
     def __iter__(self):
         for idx in self.indices:
@@ -182,7 +192,8 @@ class CryoCARE_DataModule(object):
                                                   n_samples_per_tomo * (1 - validation_fraction)),
                                               extraction_shapes=train_extraction_shapes,
                                               sample_shape=sample_shape,
-                                              shuffle=True, n_normalization_samples=n_normalization_samples)
+                                              shuffle=True, n_normalization_samples=n_normalization_samples,
+                                              tilt_axis=tilt_axis)
 
         self.val_dataset = CryoCARE_Dataset(tomo_paths_odd=tomo_paths_odd,
                                             tomo_paths_even=tomo_paths_even,
@@ -191,7 +202,8 @@ class CryoCARE_DataModule(object):
                                             n_samples_per_tomo=int(n_samples_per_tomo * validation_fraction),
                                             extraction_shapes=val_extraction_shapes,
                                             sample_shape=sample_shape,
-                                            shuffle=False)
+                                            shuffle=False,
+                                            tilt_axis=None)
 
     def save(self, path):
         self.train_dataset.save(join(path, 'train_data.npz'))
