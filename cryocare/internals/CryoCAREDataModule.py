@@ -17,6 +17,11 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
         self.n_samples_per_tomo = n_samples_per_tomo
         self.tilt_axis = tilt_axis
 
+        tilt_axis_index = ["Z", "Y", "X"].index(self.tilt_axis)
+        rot_axes = [0, 1, 2]
+        rot_axes.remove(tilt_axis_index)
+        self.rot_axes = tuple(rot_axes)
+
         self.extraction_shapes = extraction_shapes
         self.mean = mean
         self.std = std
@@ -127,11 +132,10 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
     def augment(self, x, y):
         if self.tilt_axis is not None:
             rot_k = np.random.randint(0, 4, x.shape[0])
-            rot_axes = tuple([0, 1, 2].remove(["Z", "Y", "X"].index(self.tilt_axis)))
 
             for i in range(x.shape[0]):
-                x[i] = np.rot90(x[i], k=rot_k[i], axes=rot_axes)
-                y[i] = np.rot90(y[i], k=rot_k[i], axes=rot_axes)
+                x[i] = np.rot90(x[i], k=rot_k[i], axes=self.rot_axes)
+                y[i] = np.rot90(y[i], k=rot_k[i], axes=self.rot_axes)
 
 
         if np.random.rand() > 0.5:
