@@ -50,7 +50,8 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
                  extraction_shapes=self.extraction_shapes,
                  sample_shape=self.sample_shape,
                  shuffle=self.shuffle,
-                 coords=self.coords)
+                 coords=self.coords,
+                 tilt_axis=self.tilt_axis)
 
     @classmethod
     def load(cls, path):
@@ -64,6 +65,7 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
         sample_shape = tmp['sample_shape']
         shuffle = tmp['shuffle']
         coords = tmp['coords']
+        tilt_axis = tmp['tilt_axis']
 
         ds = cls(tomo_paths_odd=tomo_paths_odd,
                  tomo_paths_even=tomo_paths_even,
@@ -72,7 +74,8 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
                  n_samples_per_tomo=n_samples_per_tomo,
                  extraction_shapes=extraction_shapes,
                  sample_shape=sample_shape,
-                 shuffle=shuffle)
+                 shuffle=shuffle,
+                 tilt_axis=tilt_axis)
         ds.coords = coords
         return ds
 
@@ -124,7 +127,7 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
     def augment(self, x, y):
         if self.tilt_axis is not None:
             rot_k = np.random.randint(0, 4, x.shape[0])
-            rot_axes = tuple([0,1,2].remove(["Z", "Y", "X"].index(self.tilt_axis)))
+            rot_axes = tuple([0, 1, 2].remove(["Z", "Y", "X"].index(self.tilt_axis)))
 
             for i in range(x.shape[0]):
                 x[i] = np.rot90(x[i], k=rot_k[i], axes=rot_axes)
