@@ -153,7 +153,10 @@ def main():
                 denoise(config, mean, std, even=even, odd=odd, output_file=out_filename)
     else:
         # Fall back to original cryoCARE implmentation
-        print("Your config is not in the format that cryoCARE >=0.2 requires. Fallback to cryCARE 0.1 format.")
+        s = f" {config['path']} is not a file"
+        if os.path.exists(config['path']):
+            s = f" {config['path']} does not exist"
+        print(f"The specified 'path' {s}. Your config is not in the format that cryoCARE >=0.2 requires. Fallback to cryCARE 0.1 format.")
         if 'output_name' not in config or os.path.isfile(config['path']):
             print("Invalid config format.")
             sys.exit(1)
