@@ -134,8 +134,8 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
             rot_k = np.random.randint(0, 4, x.shape[0])
 
             for i in range(x.shape[0]):
-                x[i,...,0] = np.rot90(x[i,...,0], k=rot_k[i], axes=self.rot_axes)
-                y[i,...,0] = np.rot90(y[i,...,0], k=rot_k[i], axes=self.rot_axes)
+                x[i,...,0] = np.rot90(x[i,...,0], k=rot_k[i], axes=(0,1))
+                y[i,...,0] = np.rot90(y[i,...,0], k=rot_k[i], axes=(0,1))
 
 
         if np.random.rand() > 0.5:
@@ -210,7 +210,7 @@ class CryoCARE_DataModule(object):
                                             extraction_shapes=val_extraction_shapes,
                                             sample_shape=sample_shape,
                                             shuffle=False,
-                                            tilt_axis=None)
+                                            tilt_axis=tilt_axis)
 
     def save(self, path):
         self.train_dataset.save(join(path, 'train_data.npz'))
