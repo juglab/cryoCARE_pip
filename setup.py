@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cryoCARE",
-    version="0.2.0",
+    version="0.2.1",
     author="Tim-Oliver Buchholz, Thorsten Wagner",
     author_email="tim-oliver.buchholz@fmi.ch, "
                  "thorsten.wagner@mpi-dortmund.mpg.de",
