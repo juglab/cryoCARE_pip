@@ -236,7 +236,7 @@ class CryoCARE_DataModule(object):
         assert even.data.shape[1] > 2 * sample_shape[1]
         assert even.data.shape[2] > 2 * sample_shape[2]
 
-        val_cut_off = int(even.data.shape[tilt_axis_index] * (1 - validation_fraction))
+        val_cut_off = int(even.data.shape[tilt_axis_index] * (1 - validation_fraction)) - 1
         if ((even.data.shape[tilt_axis_index] - val_cut_off) < sample_shape[tilt_axis_index]) or val_cut_off < sample_shape[tilt_axis_index]:
             val_cut_off = even.data.shape[tilt_axis_index] - sample_shape[tilt_axis_index] - 1
 
