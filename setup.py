@@ -23,7 +23,7 @@ setuptools.setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        "numpy",
+        "numpy~=1.19.2",
         "mrcfile",
         "csbdeep>=0.7.0,<0.8.0",
         "psutil"
