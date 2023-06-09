@@ -12,6 +12,11 @@ These two (even and odd) tomograms can be used as input to this cryoCARE impleme
 
 ## Changelog
 
+
+### Version 0.3
+
+* `cyroCARE_train` now supports parallelization over multiple GPUs.
+
 ### Version 0.2
 
 * `cyroCARE_train` produces a compressed and more portable model. This model can be copied and shared with others without relying on a certain folder structure.
@@ -118,6 +123,18 @@ To run the training we run the following command:
 `cryoCARE_train.py --conf train_config.json`
 
 You will find a `.tar.gz` file in the directory you specified as `path`. This your model an will be used in the next step.
+
+##### Train using multiple GPUs:
+Training can be faster by running on multiple GPUs (which must be available in the same machine). All you need to do is set the `CUDA_VISIBLE_DEVICES` environment variable to indicate the devices you want to use for training. For example, using 4 GPUs:
+
+````
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+cryoCARE_train.py --conf train_config.json
+````
+
+Please note that the performance does not improve linearly with the number of devices used for training. The actual speedup will depend on your training settings and hardware.
+
+**Note:** If running cryoCARE under a cluster resource manager such as SLURM, the `CUDA_VISIBLE_DEVICES` environment variable might be automatically set when you request a certain number of GPUs, so you don't need to set it explicitly. Check your cluster documentation or support team for details.
 
 ### 3. Prediction
 Create an empty file called `predict_config.json`, copy-paste the following template and fill it in.
