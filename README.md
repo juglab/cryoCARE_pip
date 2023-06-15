@@ -118,7 +118,7 @@ Create an empty file called `train_config.json`, copy-paste the following templa
 * `"learning_rate"`: Learning rate of the model training.
 * `"model_name"`: Name of the model.
 * `"path"`: Output path for the model.
-* `"gpu_id"`: This is optional. Provide the ID(s) of the GPUs you wish to use. Alternatively, you can specify the GPU ID(s) using the `CUDA_VISIBLE_DEVICES` environment variable. For specifying multiple GPU ID(s), see below.
+* `"gpu_id"`: This is optional. Provide the ID(s) of the GPUs you wish to use. Alternatively, you can specify the GPU ID(s) using the `CUDA_VISIBLE_DEVICES` environment variable. Training supports multiple GPUs (see below).
 
 #### Run Training:
 To run the training we run the following command:
@@ -137,7 +137,7 @@ You can specify multiple GPU ID(s) in the `train_config.json` file as follows (w
 
 `"gpu_id": [0,1,2,3]`
 
-**Note:** This method takes precedence over the `CUDA_VISIBLE_DEVICES` method below.
+**Note:** This method takes precedence over the `CUDA_VISIBLE_DEVICES` method below. If you want to use that method, you should **omit** the `"gpu_id"` entry from your `train_config.json` file.
 
 ###### Method 2: Using the `CUDA_VISIBLE_DEVICES` environment variable
 
