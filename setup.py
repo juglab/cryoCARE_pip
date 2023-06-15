@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cryoCARE",
-    version="0.2.1",
+    version="0.2.2",
     author="Tim-Oliver Buchholz, Thorsten Wagner",
     author_email="tim-oliver.buchholz@fmi.ch, "
                  "thorsten.wagner@mpi-dortmund.mpg.de",
@@ -23,7 +23,7 @@ setuptools.setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        "numpy",
+        "numpy~=1.19.2",
         "mrcfile",
         "csbdeep>=0.7.0,<0.8.0",
         "psutil"

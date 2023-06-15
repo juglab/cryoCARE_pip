@@ -102,6 +102,7 @@ def denoise(config: dict, mean: float, std: float, even: str, odd: str, output_f
         else:
             mrc.header[l] = even.header[l]
     mrc.header['mode'] = 2
+    mrc.set_extended_header(even.extended_header)
 
 def main():
     
