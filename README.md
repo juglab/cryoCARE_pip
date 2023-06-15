@@ -102,7 +102,8 @@ Create an empty file called `train_config.json`, copy-paste the following templa
   "unet_n_first": 16,
   "learning_rate": 0.0004,
   "model_name": "model_name",
-  "path": "./"
+  "path": "./",
+  "gpu_id": 0
 }
 ```
 
@@ -117,6 +118,7 @@ Create an empty file called `train_config.json`, copy-paste the following templa
 * `"learning_rate"`: Learning rate of the model training.
 * `"model_name"`: Name of the model.
 * `"path"`: Output path for the model.
+* `"gpu_id"`: This is optional. Provide the GPU ID(s) of the GPUs you wish to use.
 
 #### Run Training:
 To run the training we run the following command:
@@ -140,21 +142,24 @@ Please note that the performance does not improve linearly with the number of de
 Create an empty file called `predict_config.json`, copy-paste the following template and fill it in.
 ```
 {
-  "path": "path/to/your/model.tar.gz",
-  "even": "/path/to/even/tomos/",
-  "odd": "/path/to/odd/tomos/",
-  "n_tiles": [1, 1, 1],
-  "output": "/path/to/output/folder/",
-  "overwrite": false
+  "path": "path/to/your/model/model_name.tar.gz",
+  "even": "/path/to/even.rec",
+  "odd": "/path/to/odd.rec",
+  "n_tiles": [1,1,1],
+  "output": "denoised.rec",
+  "overwrite": False,
+  "gpu_id": 0
 }
 ```
 
 #### Parameters:
 * `"path"`: Path to your model file.
-* `"even"`: Path to directory with even tomograms or a specific even tomogram.
-* `"odd"`: Path to directory with odd tomograms or a specific odd tomogram.
+* `"even"`: Path to directory with even tomograms or a specific even tomogram or a list of specific even tomograms.
+* `"odd"`: Path to directory with odd tomograms or a specific odd tomogram or a list of specific odd tomograms in the same order as the even tomograms.
 * `"n_tiles"`: Initial tiles per dimension. Gets increased if the tiles do not fit on the GPU.
 * `"output"`: Path where the denoised tomograms will be written.
+* `"overwrite"`: Allow previous files to be overwritten.
+* `"gpu_id"`: This is optional. Provide the GPU ID(s) of the GPUs you wish to use.
 
 #### Run Prediction:
 To run the training we run the following command:
