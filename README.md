@@ -102,7 +102,8 @@ Create an empty file called `train_config.json`, copy-paste the following templa
   "unet_n_first": 16,
   "learning_rate": 0.0004,
   "model_name": "model_name",
-  "path": "./"
+  "path": "./",
+  "gpu_id": 0
 }
 ```
 
@@ -117,6 +118,7 @@ Create an empty file called `train_config.json`, copy-paste the following templa
 * `"learning_rate"`: Learning rate of the model training.
 * `"model_name"`: Name of the model.
 * `"path"`: Output path for the model.
+* `"gpu_id"`: This is optional. Provide the ID(s) of the GPUs you wish to use. Alternatively, you can specify the GPU ID(s) using the `CUDA_VISIBLE_DEVICES` environment variable. For specifying multiple GPU ID(s), see below.
 
 #### Run Training:
 To run the training we run the following command:
@@ -125,14 +127,26 @@ To run the training we run the following command:
 You will find a `.tar.gz` file in the directory you specified as `path`. This your model an will be used in the next step.
 
 ##### Train using multiple GPUs:
-Training can be faster by running on multiple GPUs (which must be available in the same machine). All you need to do is set the `CUDA_VISIBLE_DEVICES` environment variable to indicate the devices you want to use for training. For example, using 4 GPUs:
+Training can be faster by running on multiple GPUs (which must be available in the same machine). Please note that the performance does not improve linearly with the number of devices used for training. The actual speedup will depend on your training settings and hardware.
+
+There are two methods for specifying multiple GPU ID(s):
+
+###### Method 1: Using `gpu_id`
+
+You can specify multiple GPU ID(s) in the `train_config.json` file as follows (with 4 GPUs in this example):
+
+`"gpu_id": [0,1,2,3]`
+
+**Note:** This method takes precedence over the `CUDA_VISIBLE_DEVICES` method below.
+
+###### Method 2: Using the `CUDA_VISIBLE_DEVICES` environment variable
+
+For example, with 4 GPUs:
 
 ````
 export CUDA_VISIBLE_DEVICES=0,1,2,3
 cryoCARE_train.py --conf train_config.json
 ````
-
-Please note that the performance does not improve linearly with the number of devices used for training. The actual speedup will depend on your training settings and hardware.
 
 **Note:** If running cryoCARE under a cluster resource manager such as SLURM, the `CUDA_VISIBLE_DEVICES` environment variable might be automatically set when you request a certain number of GPUs, so you don't need to set it explicitly. Check your cluster documentation or support team for details.
 
@@ -140,21 +154,24 @@ Please note that the performance does not improve linearly with the number of de
 Create an empty file called `predict_config.json`, copy-paste the following template and fill it in.
 ```
 {
-  "path": "path/to/your/model.tar.gz",
-  "even": "/path/to/even/tomos/",
-  "odd": "/path/to/odd/tomos/",
-  "n_tiles": [1, 1, 1],
-  "output": "/path/to/output/folder/",
-  "overwrite": false
+  "path": "path/to/your/model/model_name.tar.gz",
+  "even": "/path/to/even.rec",
+  "odd": "/path/to/odd.rec",
+  "n_tiles": [1,1,1],
+  "output": "denoised.rec",
+  "overwrite": False,
+  "gpu_id": 0
 }
 ```
 
 #### Parameters:
 * `"path"`: Path to your model file.
-* `"even"`: Path to directory with even tomograms or a specific even tomogram.
-* `"odd"`: Path to directory with odd tomograms or a specific odd tomogram.
+* `"even"`: Path to directory with even tomograms or a specific even tomogram or a list of specific even tomograms.
+* `"odd"`: Path to directory with odd tomograms or a specific odd tomogram or a list of specific odd tomograms in the same order as the even tomograms.
 * `"n_tiles"`: Initial tiles per dimension. Gets increased if the tiles do not fit on the GPU.
 * `"output"`: Path where the denoised tomograms will be written.
+* `"overwrite"`: Allow previous files to be overwritten.
+* `"gpu_id"`: This is optional. Provide the ID of the GPU you wish to use. Alternatively, you can specify the GPU ID using the `CUDA_VISIBLE_DEVICES` environment variable. Note that prediction only supports a single GPU currently.
 
 #### Run Prediction:
 To run the training we run the following command:
