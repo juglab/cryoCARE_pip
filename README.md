@@ -12,6 +12,11 @@ These two (even and odd) tomograms can be used as input to this cryoCARE impleme
 
 ## Changelog
 
+
+### Version 0.3
+
+* `cyroCARE_train` now supports parallelization over multiple GPUs.
+
 ### Version 0.2
 
 * `cyroCARE_train` produces a compressed and more portable model. This model can be copied and shared with others without relying on a certain folder structure.
@@ -113,13 +118,37 @@ Create an empty file called `train_config.json`, copy-paste the following templa
 * `"learning_rate"`: Learning rate of the model training.
 * `"model_name"`: Name of the model.
 * `"path"`: Output path for the model.
-* `"gpu_id"`: This is optional. Provide the GPU ID(s) of the GPUs you wish to use.
+* `"gpu_id"`: This is optional. Provide the ID(s) of the GPUs you wish to use. Alternatively, you can specify the GPU ID(s) using the `CUDA_VISIBLE_DEVICES` environment variable. Training supports multiple GPUs (see below).
 
 #### Run Training:
 To run the training we run the following command:
 `cryoCARE_train.py --conf train_config.json`
 
 You will find a `.tar.gz` file in the directory you specified as `path`. This your model an will be used in the next step.
+
+##### Train using multiple GPUs:
+Training can be faster by running on multiple GPUs (which must be available in the same machine). Please note that the performance does not improve linearly with the number of devices used for training. The actual speedup will depend on your training settings and hardware.
+
+There are two methods for specifying multiple GPU ID(s):
+
+###### Method 1: Using `gpu_id`
+
+You can specify multiple GPU ID(s) in the `train_config.json` file as follows (with 4 GPUs in this example):
+
+`"gpu_id": [0,1,2,3]`
+
+**Note:** This method takes precedence over the `CUDA_VISIBLE_DEVICES` method below. If you want to use that method, you should **omit** the `"gpu_id"` entry from your `train_config.json` file.
+
+###### Method 2: Using the `CUDA_VISIBLE_DEVICES` environment variable
+
+For example, with 4 GPUs:
+
+````
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+cryoCARE_train.py --conf train_config.json
+````
+
+**Note:** If running cryoCARE under a cluster resource manager such as SLURM, the `CUDA_VISIBLE_DEVICES` environment variable might be automatically set when you request a certain number of GPUs, so you don't need to set it explicitly. Check your cluster documentation or support team for details.
 
 ### 3. Prediction
 Create an empty file called `predict_config.json`, copy-paste the following template and fill it in.
@@ -142,7 +171,7 @@ Create an empty file called `predict_config.json`, copy-paste the following temp
 * `"n_tiles"`: Initial tiles per dimension. Gets increased if the tiles do not fit on the GPU.
 * `"output"`: Path where the denoised tomograms will be written.
 * `"overwrite"`: Allow previous files to be overwritten.
-* `"gpu_id"`: This is optional. Provide the GPU ID(s) of the GPUs you wish to use.
+* `"gpu_id"`: This is optional. Provide the ID of the GPU you wish to use. Alternatively, you can specify the GPU ID using the `CUDA_VISIBLE_DEVICES` environment variable. Note that prediction only supports a single GPU currently.
 
 #### Run Prediction:
 To run the training we run the following command:
