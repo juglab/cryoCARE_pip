@@ -63,6 +63,9 @@ Create an empty file called `train_data_config.json`, copy-paste the following t
   "odd": [
     "/path/to/odd.rec"
   ],
+  "mask": [
+    "/path/to/mask.mrc or None"
+  ],
   "patch_shape": [
     72,
     72,
@@ -78,6 +81,7 @@ Create an empty file called `train_data_config.json`, copy-paste the following t
 #### Parameters:
 * `"even"`: List of all even tomograms.
 * `"odd"`: List of all odd tomograms. Note the order has to be the same as in `"even"`.
+* `"mask"`: If desired, a list of binary masks to limit where subvolumes are extracted, similar to IsoNet. If you want to skip masking, put `"None"`. Order has to be the same as in `even`.
 * `"patch_shape"`: Size of the sub-volumes used for training. Should not be smaller than `64, 64, 64`.
 * `"num_slices"`: Number of sub-volumes extracted per tomograms. 
 * `"tilt_axis"`: Tilt-axis of the tomograms. We split the tomogram along this axis to extract train- and validation data separately.

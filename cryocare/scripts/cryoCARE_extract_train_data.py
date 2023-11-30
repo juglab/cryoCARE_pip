@@ -24,7 +24,7 @@ def main():
         config = json.load(f)
 
     dm = CryoCARE_DataModule()
-    dm.setup(config['odd'], config['even'], n_samples_per_tomo=config['num_slices'],
+    dm.setup(config['odd'], config['even'], config['mask'], n_samples_per_tomo=config['num_slices'],
                              validation_fraction=(1.0 - config['split']), sample_shape=config['patch_shape'],
                              tilt_axis=config['tilt_axis'], n_normalization_samples=config['n_normalization_samples'])
     
