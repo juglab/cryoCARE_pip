@@ -37,12 +37,8 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
         self.tomos_even = [mrcfile.mmap(p, mode='r', permissive=True) for p in self.tomo_paths_even]
         self.n_tomos = len(self.tomo_paths_odd)
 
-        if mask_paths is not None:
-            self.masks = [mrcfile.mmap(p, mode='r', permissive=True) for p in self.mask_paths]
-        else:
-            self.masks = [None] * self.n_tomos
+        if self.mask_paths is None:
             self.mask_paths = [None] * self.n_tomos
-        
 
         self.create_coordinate_lists()
         self.length = sum([c.shape[0] for c in self.coords])
@@ -220,7 +216,7 @@ class CryoCARE_DataModule(object):
         self.train_dataset = None
         self.val_dataset = None
 
-    def setup(self, tomo_paths_odd, tomo_paths_even, mask_paths, n_samples_per_tomo, validation_fraction=0.1,
+    def setup(self, tomo_paths_odd, tomo_paths_even, mask_paths = None, n_samples_per_tomo = 1200, validation_fraction=0.1,
               sample_shape=(64, 64, 64), tilt_axis='Y', n_normalization_samples=500):
         train_extraction_shapes = []
         val_extraction_shapes = []
