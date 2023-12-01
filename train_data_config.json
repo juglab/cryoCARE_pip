@@ -6,7 +6,7 @@
     "/path/to/odd.rec"
   ],
   "mask": [
-    "/path/to/mask.mrc or None"
+    "/path/to/mask.mrc"
   ],
   "patch_shape": [
     72,
