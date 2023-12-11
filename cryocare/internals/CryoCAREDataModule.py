@@ -3,17 +3,17 @@ import tensorflow as tf
 
 import mrcfile
 import tqdm
-import numpy as np
 
 from os.path import join
 
 
 class CryoCARE_Dataset(tf.keras.utils.Sequence):
-    def __init__(self, tomo_paths_odd=None, tomo_paths_even=None, n_samples_per_tomo=None,
-                 extraction_shapes=None, mean=None, std=None,
+    def __init__(self, tomo_paths_odd=None, tomo_paths_even=None, mask_paths=None,
+                 n_samples_per_tomo=None, extraction_shapes=None, mean=None, std=None,
                  sample_shape=(64, 64, 64), shuffle=True, n_normalization_samples=500, tilt_axis=None):
         self.tomo_paths_odd = tomo_paths_odd
         self.tomo_paths_even = tomo_paths_even
+        self.mask_paths = mask_paths
         self.n_samples_per_tomo = n_samples_per_tomo
         self.tilt_axis = tilt_axis
 
@@ -36,6 +36,9 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
         self.tomos_odd = [mrcfile.mmap(p, mode='r', permissive=True) for p in self.tomo_paths_odd]
         self.tomos_even = [mrcfile.mmap(p, mode='r', permissive=True) for p in self.tomo_paths_even]
         self.n_tomos = len(self.tomo_paths_odd)
+
+        if self.mask_paths is None:
+            self.mask_paths = [None] * self.n_tomos
 
         self.create_coordinate_lists()
         self.length = sum([c.shape[0] for c in self.coords])
@@ -103,17 +106,28 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
 
     def create_coordinate_lists(self):
         self.coords = []
-        for odd, even, es in zip(self.tomo_paths_odd, self.tomo_paths_even, self.extraction_shapes):
-            self.coords.append(self.__create_coords_for_tomo__(even, odd, es))
+        
+        for odd, even, es, maskfile in zip(self.tomo_paths_odd, self.tomo_paths_even, self.extraction_shapes, self.mask_paths):
+            self.coords.append(self.__create_coords_for_tomo__(even, odd, es, maskfile))
 
         self.coords = np.array(self.coords)
 
-    def __create_coords_for_tomo__(self, even_path, odd_path, extraction_shape):
+    def __create_coords_for_tomo__(self, even_path, odd_path, extraction_shape, mask_path):
         even = mrcfile.mmap(even_path, mode='r')
         odd = mrcfile.mmap(odd_path, mode='r')
-
+        
         assert even.data.shape == odd.data.shape, '{} and {} tomogram have different shapes.'.format(even_path,
                                                                                                      odd_path)
+        
+        # If no mask is specified, just create a one-mask
+        if mask_path is None:
+            mask = np.ones(even.data.shape).astype(np.bool)
+        else:
+            mask = mrcfile.read(mask_path).astype(np.bool)
+
+            assert even.data.shape == mask.data.shape, '{} and {} tomogram / mask have different shapes.'.format(even_path,
+                                                                                                                 mask_path)
+        
         assert even.data.shape[0] > 2 * self.sample_shape[0]
         assert even.data.shape[1] > 2 * self.sample_shape[1]
         assert even.data.shape[2] > 2 * self.sample_shape[2]
@@ -121,6 +135,7 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
         coords = self.create_random_coords(extraction_shape[0],
                                            extraction_shape[1],
                                            extraction_shape[2],
+                                           mask,
                                            n_samples=self.n_samples_per_tomo)
 
         even.close()
@@ -128,12 +143,27 @@ class CryoCARE_Dataset(tf.keras.utils.Sequence):
 
         return coords
 
-    def create_random_coords(self, z, y, x, n_samples):
-        z_coords = np.random.randint(z[0], z[1] - self.sample_shape[0], size=n_samples)
-        y_coords = np.random.randint(y[0], y[1] - self.sample_shape[0], size=n_samples)
-        x_coords = np.random.randint(x[0], x[1] - self.sample_shape[0], size=n_samples)
+    def create_random_coords(self, z, y, x, mask, n_samples):
+        # Inspired by isonet preprocessing.cubes:create_cube_seeds()
+        
+        # Get permissible locations based on extraction_shape and sample_shape
+        slices = tuple([slice(z[0],z[1]-self.sample_shape[2]),
+                       slice(y[0],y[1]-self.sample_shape[1]),
+                       slice(x[0],x[1]-self.sample_shape[0])])
+        
+        # Get intersect with mask-allowed values                       
+        valid_inds = np.where(mask[slices])
+        
+        valid_inds = [v + s.start for s, v in zip(slices, valid_inds)]
+        
+        sample_inds = np.random.choice(len(valid_inds[0]),
+                                       n_samples,
+                                       replace=len(valid_inds[0]) < n_samples)
+        
+        rand_inds = [v[sample_inds] for v in valid_inds]
+        
 
-        return np.stack([z_coords, y_coords, x_coords], -1)
+        return np.stack([rand_inds[0],rand_inds[1], rand_inds[2]], -1)
 
     def augment(self, x, y):
         if self.tilt_axis is not None:
@@ -186,7 +216,7 @@ class CryoCARE_DataModule(object):
         self.train_dataset = None
         self.val_dataset = None
 
-    def setup(self, tomo_paths_odd, tomo_paths_even, n_samples_per_tomo, validation_fraction=0.1,
+    def setup(self, tomo_paths_odd, tomo_paths_even, mask_paths = None, n_samples_per_tomo = 1200, validation_fraction=0.1,
               sample_shape=(64, 64, 64), tilt_axis='Y', n_normalization_samples=500):
         train_extraction_shapes = []
         val_extraction_shapes = []
@@ -199,6 +229,7 @@ class CryoCARE_DataModule(object):
 
         self.train_dataset = CryoCARE_Dataset(tomo_paths_odd=tomo_paths_odd,
                                               tomo_paths_even=tomo_paths_even,
+                                              mask_paths=mask_paths,
                                               mean=None,
                                               std=None,
                                               n_samples_per_tomo=int(
@@ -210,6 +241,7 @@ class CryoCARE_DataModule(object):
 
         self.val_dataset = CryoCARE_Dataset(tomo_paths_odd=tomo_paths_odd,
                                             tomo_paths_even=tomo_paths_even,
+                                            mask_paths=mask_paths,
                                             mean=self.train_dataset.mean,
                                             std=self.train_dataset.std,
                                             n_samples_per_tomo=int(n_samples_per_tomo * validation_fraction),
