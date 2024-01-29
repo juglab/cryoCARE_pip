@@ -216,7 +216,7 @@ class CryoCARE_DataModule(object):
         self.train_dataset = None
         self.val_dataset = None
 
-    def setup(self, tomo_paths_odd, tomo_paths_even, mask_paths = None, n_samples_per_tomo = 1200, validation_fraction=0.1,
+    def setup(self, tomo_paths_odd, tomo_paths_even, mask_paths, n_samples_per_tomo = 1200, validation_fraction=0.1,
               sample_shape=(64, 64, 64), tilt_axis='Y', n_normalization_samples=500):
         train_extraction_shapes = []
         val_extraction_shapes = []
