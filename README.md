@@ -163,7 +163,7 @@ Create an empty file called `predict_config.json`, copy-paste the following temp
   "odd": "/path/to/odd.rec",
   "n_tiles": [1,1,1],
   "output": "denoised.rec",
-  "overwrite": False,
+  "overwrite": "False",
   "gpu_id": 0
 }
 ```
